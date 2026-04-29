@@ -1,6 +1,6 @@
 # nvoip-powershell
 
-Cliente PowerShell simples para a API v2 da Nvoip, com foco nos fluxos principais de autenticação, ligações, OTP e WhatsApp.
+Módulo e exemplos oficiais da [Nvoip](https://www.nvoip.com.br/) para integrar a API v2 com OAuth, chamadas, OTP, WhatsApp, SMS e saldo em PowerShell.
 
 ## Requisitos
 

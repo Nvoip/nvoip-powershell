@@ -8,6 +8,12 @@ Módulo e exemplos oficiais da [Nvoip](https://www.nvoip.com.br/) para integrar 
 
 - PowerShell 7+
 
+## Instalacao
+
+```powershell
+Install-Module Nvoip -Scope CurrentUser
+```
+
 ## Configuração
 
 ```powershell

@@ -138,10 +138,22 @@ function Get-NvoipWhatsAppTemplates {
 }
 
 function Send-NvoipWhatsAppTemplate {
+    [CmdletBinding(DefaultParameterSetName = "LegacyPhone")]
     param(
         [Parameter(Mandatory = $true)][string]$AccessToken,
         [Parameter(Mandatory = $true)][string]$TemplateId,
-        [Parameter(Mandatory = $true)][string]$Destination,
+        [Parameter(Mandatory = $true, ParameterSetName = "LegacyPhone")]
+        [ValidatePattern('^\+?[0-9]{8,20}$')]
+        [string]$Destination,
+        [Parameter(Mandatory = $true, ParameterSetName = "TypedRecipient")]
+        [ValidateSet("phone", "bsuid", "parent_bsuid")]
+        [string]$RecipientType,
+        [Parameter(Mandatory = $true, ParameterSetName = "TypedRecipient")]
+        [ValidateScript({
+            if ($_ -match '^@') { throw "@username is not a WhatsApp recipient; use a BSUID or parent BSUID" }
+            -not [string]::IsNullOrWhiteSpace($_)
+        })]
+        [string]$RecipientValue,
         [Parameter(Mandatory = $true)][string]$Instance,
         [string]$Language = "pt_BR",
         [array]$BodyVariables = @(),
@@ -151,9 +163,19 @@ function Send-NvoipWhatsAppTemplate {
 
     $payload = @{
         idTemplate = $TemplateId
-        destination = $Destination
         instance = $Instance
         language = $Language
+    }
+    if ($PSCmdlet.ParameterSetName -eq "TypedRecipient") {
+        if ($RecipientType -eq "phone" -and $RecipientValue -notmatch '^\+?[0-9]{8,20}$') {
+            throw "A phone recipient must contain only an optional leading + and 8 to 20 digits."
+        }
+        if ($ToFlow -and $RecipientType -ne "phone") {
+            throw "WhatsApp Flow and attendance require a phone recipient."
+        }
+        $payload.recipient = @{ type = $RecipientType; value = $RecipientValue }
+    } else {
+        $payload.destination = $Destination
     }
 
     if ($BodyVariables.Count -gt 0) { $payload.bodyVariables = $BodyVariables }

@@ -1,6 +1,6 @@
 @{
     RootModule        = 'Nvoip.psm1'
-    ModuleVersion     = '0.1.0'
+    ModuleVersion     = '0.1.1'
     GUID              = '521D4172-84D9-440C-BCAD-9A572C3DD86A'
     Author            = 'Nvoip'
     CompanyName       = 'Nvoip'
@@ -27,7 +27,7 @@
             Tags       = @('nvoip', 'voip', 'telefonia', 'sms', 'whatsapp', 'otp', 'api')
             LicenseUri = 'https://www.gnu.org/licenses/gpl-3.0-standalone.html'
             ProjectUri = 'https://www.nvoip.com.br/'
-            ReleaseNotes = 'Initial public SDK package for the Nvoip API v2.'
+            ReleaseNotes = 'Adds typed WhatsApp recipients for phone, BSUID, and parent BSUID while preserving the legacy destination contract.'
         }
     }
 }

@@ -47,6 +47,14 @@ $env:NVOIP_TARGET_NUMBER = "11999999999"
 - `pwsh examples/list-whatsapp-templates.ps1`
 - `pwsh examples/send-whatsapp-template.ps1`
 
+### Destinatário WhatsApp
+
+`Send-NvoipWhatsAppTemplate` mantém `-Destination` para telefone e oferece o
+parameter set exclusivo `-RecipientType phone|bsuid|parent_bsuid
+-RecipientValue <valor>`. BSUID é opaco; não use `@username` nem o coloque em
+campo de telefone. Exemplos mascarados: `US.MASKED_BSUID_001` e
+`PARENT.MASKED_BSUID_001`.
+
 ## SDK web
 
 Para o fluxo de popup com telefone e código, use em conjunto o repositório `nvoip-web-sdk`. Este repo cobre o consumo server-side da API.

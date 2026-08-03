@@ -4,6 +4,12 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish to PowerShell Gallery after validation
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -11,16 +17,24 @@ permissions:
 jobs:
   powershell-gallery:
     name: Publish to PowerShell Gallery
-    runs-on: ubuntu-latest
+    runs-on:
+      - codebuild-nvoip-ci-public-release-${{ github.run_id }}-${{ github.run_attempt }}
+      - organization-registration-name:Nvoip
+      - registration-group-id:4
     defaults:
       run:
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
       - run: Test-ModuleManifest ./Nvoip.psd1
-      - run: |
+      - name: Prepare module package
+        run: |
           New-Item -ItemType Directory -Path ./Nvoip -Force | Out-Null
           Copy-Item ./Nvoip.psm1, ./Nvoip.psd1, ./README.md, ./LICENSE -Destination ./Nvoip
+          Test-ModuleManifest ./Nvoip/Nvoip.psd1
+      - name: Publish module
+        if: github.event_name == 'release' || inputs.publish
+        run: |
           Publish-Module -Path ./Nvoip -NuGetApiKey $env:PSGALLERY_API_KEY -Repository PSGallery -Force
         env:
           PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}

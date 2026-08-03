@@ -17,7 +17,7 @@ permissions:
 jobs:
   powershell-gallery:
     name: Publish to PowerShell Gallery
-    runs-on: [self-hosted, Linux, X64, nvoip-ci-public-release]
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: pwsh

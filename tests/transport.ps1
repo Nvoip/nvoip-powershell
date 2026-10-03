@@ -1,6 +1,6 @@
 $global:requests = @()
 Import-Module (Join-Path $PSScriptRoot '../Nvoip.psm1') -Force
-& (Get-Module Nvoip) { $script:NvoipRequestHandler = { param($params) $global:requests += $params; @{ access_token='token' } } }
+$global:NvoipRequestHandler = { param($params) $global:requests += $params; @{ access_token='token' } }
 $env:NVOIP_OAUTH_CLIENT_ID = 'id +'; $env:NVOIP_OAUTH_CLIENT_SECRET = 'secret:/'
 New-NvoipAccessToken | Out-Null
 Get-NvoipBalance -AccessToken token | Out-Null

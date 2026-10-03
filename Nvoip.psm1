@@ -37,8 +37,8 @@ function Invoke-NvoipRequest {
         $params.Body = $Body
     }
 
-    if ($script:NvoipRequestHandler) {
-        return & $script:NvoipRequestHandler $params
+    if ($global:NvoipRequestHandler) {
+        return & $global:NvoipRequestHandler $params
     }
     Invoke-RestMethod @params
 }

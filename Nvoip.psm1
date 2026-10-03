@@ -8,7 +8,7 @@ function Get-NvoipBasicAuth {
         throw "Missing OAuth client credentials. Configure NVOIP_OAUTH_CLIENT_ID + NVOIP_OAUTH_CLIENT_SECRET."
     }
 
-    return [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("$OAuthClientId`:$OAuthClientSecret"))
+    return [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("$([uri]::EscapeDataString($OAuthClientId))`:$([uri]::EscapeDataString($OAuthClientSecret))"))
 }
 
 function Invoke-NvoipRequest {

@@ -17,19 +17,14 @@ function Invoke-NvoipRequest {
         [Parameter(Mandatory = $true)][string]$Path,
         [string]$BaseUrl = $env:NVOIP_BASE_URL,
         [hashtable]$Headers = @{},
-        [object]$Body = $null,
-        [string]$Napikey
+        [object]$Body = $null
     )
 
     if (-not $BaseUrl) {
-        $BaseUrl = "https://api.nvoip.com.br/v2"
+        $BaseUrl = "https://api.nvoip.com.br/v3"
     }
 
     $url = "$($BaseUrl.TrimEnd('/'))$Path"
-    if ($Napikey) {
-        $separator = $url.Contains("?") ? "&" : "?"
-        $url = "$url${separator}napikey=$([uri]::EscapeDataString($Napikey))"
-    }
 
     $params = @{
         Method      = $Method
@@ -46,15 +41,12 @@ function Invoke-NvoipRequest {
 }
 
 function New-NvoipAccessToken {
-    param(
-        [string]$Numbersip = $env:NVOIP_NUMBERSIP,
-        [string]$UserToken = $env:NVOIP_USER_TOKEN
-    )
+    param()
 
     $basicAuth = Get-NvoipBasicAuth
-    $body = "username=$([uri]::EscapeDataString($Numbersip))&password=$([uri]::EscapeDataString($UserToken))&grant_type=password"
+    $body = "grant_type=client_credentials"
 
-    Invoke-NvoipRequest -Method POST -Path "/oauth/token" -Headers @{
+    Invoke-RestMethod -Method POST -Uri "https://api.nvoip.com.br/auth/oauth2/token" -Headers @{
         Authorization = "Basic $basicAuth"
         "Content-Type" = "application/x-www-form-urlencoded"
     } -Body $body

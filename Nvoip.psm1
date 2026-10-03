@@ -40,6 +40,10 @@ function Invoke-NvoipRequest {
     if ($global:NvoipRequestHandler) {
         return & $global:NvoipRequestHandler $params
     }
+    if ($env:NVOIP_TEST_TRANSPORT -eq '1') {
+        $global:NvoipTestRequests += $params
+        return @{ access_token = 'token' }
+    }
     Invoke-RestMethod @params
 }
 

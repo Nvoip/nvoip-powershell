@@ -1,7 +1,9 @@
 $script:requests = @()
 function Invoke-RestMethod { param($Method,$Uri,$Headers,$Body,$ErrorAction) $script:requests += @{ Uri=$Uri; Headers=$Headers; Body=$Body }; @{ access_token='token' } }
 $modulePath = Join-Path (Split-Path $PSScriptRoot -Parent) 'Nvoip.psm1'
-$testModule = [IO.Path]::GetTempFileName()
+$temporaryFile = [IO.Path]::GetTempFileName()
+$testModule = "$temporaryFile.ps1"
+Remove-Item $temporaryFile -Force
 Copy-Item $modulePath $testModule -Force
 . $testModule
 Remove-Item $testModule -Force

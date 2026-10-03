@@ -4,7 +4,7 @@ $modulePath = Join-Path (Split-Path $PSScriptRoot -Parent) 'Nvoip.psm1'
 $temporaryFile = [IO.Path]::GetTempFileName()
 $testModule = "$temporaryFile.ps1"
 Remove-Item $temporaryFile -Force
-Copy-Item $modulePath $testModule -Force
+Get-Content $modulePath | Where-Object { $_ -notmatch '^Export-ModuleMember' } | Set-Content $testModule
 . $testModule
 Remove-Item $testModule -Force
 $env:NVOIP_OAUTH_CLIENT_ID = 'id +'; $env:NVOIP_OAUTH_CLIENT_SECRET = 'secret:/'

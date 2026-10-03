@@ -1,6 +1,6 @@
 $script:requests = @()
 function Invoke-RestMethod { param($Method,$Uri,$Headers,$Body,$ErrorAction) $script:requests += @{ Uri=$Uri; Headers=$Headers; Body=$Body }; if ($Uri -match 'unauthorized') { throw '401' }; @{ access_token='token' } }
-. "$PSScriptRoot/../Nvoip.psm1"
+Import-Module (Join-Path $PSScriptRoot '../Nvoip.psm1') -Force
 $env:NVOIP_OAUTH_CLIENT_ID = 'id +'; $env:NVOIP_OAUTH_CLIENT_SECRET = 'secret:/'
 New-NvoipAccessToken | Out-Null
 Get-NvoipBalance -AccessToken token | Out-Null

@@ -17,3 +17,4 @@ jobs:
       - uses: actions/checkout@v4
       - run: Test-ModuleManifest ./Nvoip.psd1
       - run: Import-Module ./Nvoip.psm1 -Force
+      - run: ./tests/transport.ps1

@@ -114,11 +114,12 @@ function Send-NvoipOtp {
 
 function Test-NvoipOtp {
     param(
+        [Parameter(Mandatory = $true)][string]$AccessToken,
         [Parameter(Mandatory = $true)][string]$Code,
         [Parameter(Mandatory = $true)][string]$Key
     )
 
-    Invoke-NvoipRequest -Method GET -Path "/check/otp?code=$([uri]::EscapeDataString($Code))&key=$([uri]::EscapeDataString($Key))"
+    Invoke-NvoipRequest -Method GET -Path "/check/otp?code=$([uri]::EscapeDataString($Code))&key=$([uri]::EscapeDataString($Key))" -Headers @{ Authorization = "Bearer $AccessToken" }
 }
 
 function Get-NvoipWhatsAppTemplates {

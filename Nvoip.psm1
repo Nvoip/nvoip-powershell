@@ -8,7 +8,7 @@ function Get-NvoipBasicAuth {
         throw "Missing OAuth client credentials. Configure NVOIP_OAUTH_CLIENT_ID + NVOIP_OAUTH_CLIENT_SECRET."
     }
 
-    return [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("$OAuthClientId`:$OAuthClientSecret"))
+    return [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("$([uri]::EscapeDataString($OAuthClientId))`:$([uri]::EscapeDataString($OAuthClientSecret))"))
 }
 
 function Invoke-NvoipRequest {
@@ -17,19 +17,14 @@ function Invoke-NvoipRequest {
         [Parameter(Mandatory = $true)][string]$Path,
         [string]$BaseUrl = $env:NVOIP_BASE_URL,
         [hashtable]$Headers = @{},
-        [object]$Body = $null,
-        [string]$Napikey
+        [object]$Body = $null
     )
 
     if (-not $BaseUrl) {
-        $BaseUrl = "https://api.nvoip.com.br/v2"
+        $BaseUrl = "https://api.nvoip.com.br/v3"
     }
 
     $url = "$($BaseUrl.TrimEnd('/'))$Path"
-    if ($Napikey) {
-        $separator = $url.Contains("?") ? "&" : "?"
-        $url = "$url${separator}napikey=$([uri]::EscapeDataString($Napikey))"
-    }
 
     $params = @{
         Method      = $Method
@@ -46,15 +41,12 @@ function Invoke-NvoipRequest {
 }
 
 function New-NvoipAccessToken {
-    param(
-        [string]$Numbersip = $env:NVOIP_NUMBERSIP,
-        [string]$UserToken = $env:NVOIP_USER_TOKEN
-    )
+    param()
 
     $basicAuth = Get-NvoipBasicAuth
-    $body = "username=$([uri]::EscapeDataString($Numbersip))&password=$([uri]::EscapeDataString($UserToken))&grant_type=password"
+    $body = "grant_type=client_credentials"
 
-    Invoke-NvoipRequest -Method POST -Path "/oauth/token" -Headers @{
+    Invoke-RestMethod -Method POST -Uri "https://api.nvoip.com.br/auth/oauth2/token" -Headers @{
         Authorization = "Basic $basicAuth"
         "Content-Type" = "application/x-www-form-urlencoded"
     } -Body $body
@@ -122,11 +114,12 @@ function Send-NvoipOtp {
 
 function Test-NvoipOtp {
     param(
+        [Parameter(Mandatory = $true)][string]$AccessToken,
         [Parameter(Mandatory = $true)][string]$Code,
         [Parameter(Mandatory = $true)][string]$Key
     )
 
-    Invoke-NvoipRequest -Method GET -Path "/check/otp?code=$([uri]::EscapeDataString($Code))&key=$([uri]::EscapeDataString($Key))"
+    Invoke-NvoipRequest -Method GET -Path "/check/otp?code=$([uri]::EscapeDataString($Code))&key=$([uri]::EscapeDataString($Key))" -Headers @{ Authorization = "Bearer $AccessToken" }
 }
 
 function Get-NvoipWhatsAppTemplates {

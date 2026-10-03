@@ -1,7 +1,10 @@
 $script:requests = @()
 function Invoke-RestMethod { param($Method,$Uri,$Headers,$Body,$ErrorAction) $script:requests += @{ Uri=$Uri; Headers=$Headers; Body=$Body }; @{ access_token='token' } }
 $modulePath = Join-Path (Split-Path $PSScriptRoot -Parent) 'Nvoip.psm1'
-. $modulePath
+$testModule = [IO.Path]::GetTempFileName()
+Copy-Item $modulePath $testModule -Force
+. $testModule
+Remove-Item $testModule -Force
 $env:NVOIP_OAUTH_CLIENT_ID = 'id +'; $env:NVOIP_OAUTH_CLIENT_SECRET = 'secret:/'
 New-NvoipAccessToken | Out-Null
 Get-NvoipBalance -AccessToken token | Out-Null

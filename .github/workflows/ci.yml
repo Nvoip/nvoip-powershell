@@ -7,6 +7,9 @@ on:
       - main
       - master
 
+permissions:
+  contents: read
+
 jobs:
   powershell:
     runs-on: ubuntu-latest
@@ -15,6 +18,8 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - run: Test-ModuleManifest ./Nvoip.psd1
       - run: Import-Module ./Nvoip.psm1 -Force
       - run: ./tests/transport.ps1
